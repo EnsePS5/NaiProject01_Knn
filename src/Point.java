@@ -2,11 +2,6 @@ import java.util.ArrayList;
 
 public record Point(ArrayList<Double> values, String type) {
 
-    public void addPointToGroup() {
-
-
-    }
-
     public double distanceCounter(Point otherPoint) {
 
         double sumVar = 0.0;
@@ -15,5 +10,13 @@ public record Point(ArrayList<Double> values, String type) {
             sumVar += Math.pow(this.values.get(i) - otherPoint.values.get(i), 2);
         }
         return sumVar;
+    }
+
+    public ArrayList<Double> getPointValues() {
+        return this.values;
+    }
+
+    public String getPointType() {
+        return this.type;
     }
 }

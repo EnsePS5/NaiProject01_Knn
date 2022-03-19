@@ -10,6 +10,7 @@ public class PreparedData {
     private String trainingValFilePath;
 
     List<String> dataTypes;
+    ArrayList<Point> listOfPoints = new ArrayList<>();
 
     public PreparedData(String trainingVal){
         this.trainingValFilePath = trainingVal;
@@ -42,6 +43,7 @@ public class PreparedData {
                 }
                 //System.out.println(temp.get(temp.size()-1));
                 Point point = new Point(tempContainerForValues, temp.get(temp.size()-1));
+                listOfPoints.add(point);
 
             }
             dataTypes = typeList;
@@ -50,6 +52,15 @@ public class PreparedData {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public void getPointFromList(ArrayList<Double> values){
+        for (Point listOfPoint : listOfPoints) {
+            if (listOfPoint.getPointValues().containsAll(values)) {
+                for (int j = 0; j < listOfPoint.getPointValues().size(); j++) {
+                    System.out.print(listOfPoint.getPointValues().get(j) + " ");
+                }
+            }
         }
     }
 }

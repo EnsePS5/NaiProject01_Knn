@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -7,6 +9,13 @@ public class Main {
 
         data.dataPrep();
 
+        /*ArrayList<Double> test1 = new ArrayList<>();
+        test1.add(6.7);
+        test1.add(3.1);
+        test1.add(5.6);
+        test1.add(2.4);*/
+
+        //data.getPointFromList(test1);
     }
 
 }
