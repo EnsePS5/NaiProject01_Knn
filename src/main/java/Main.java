@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package main.java;
 
 public class Main {
 
@@ -6,9 +6,9 @@ public class Main {
 
        //List<String> typesInSimulation = dataPrep("tranigVal.csv");
         var data = new PreparedData("tranigVal.csv");
-
         data.dataPrep();
 
+        new PreparedSimulation(data);
         /*ArrayList<Double> test1 = new ArrayList<>();
         test1.add(6.7);
         test1.add(3.1);

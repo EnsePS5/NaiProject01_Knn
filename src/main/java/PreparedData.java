@@ -1,3 +1,5 @@
+package main.java;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,8 +11,8 @@ public class PreparedData {
 
     private String trainingValFilePath;
 
-    List<String> dataTypes;
-    ArrayList<Point> listOfPoints = new ArrayList<>();
+    public List<String> dataTypes;
+    public ArrayList<Point> listOfPoints = new ArrayList<>();
 
     public PreparedData(String trainingVal){
         this.trainingValFilePath = trainingVal;
@@ -58,7 +60,7 @@ public class PreparedData {
         for (Point listOfPoint : listOfPoints) {
             if (listOfPoint.getPointValues().containsAll(values)) {
                 for (int j = 0; j < listOfPoint.getPointValues().size(); j++) {
-                    System.out.print(listOfPoint.getPointValues().get(j) + " ");
+                    System.out.print(listOfPoint.getPointValues().get(j) + " "); //TODO change implementation
                 }
             }
         }
