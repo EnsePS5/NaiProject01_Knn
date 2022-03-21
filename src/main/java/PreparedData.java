@@ -1,17 +1,18 @@
-package main.java;
-
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class PreparedData {
 
-    private String trainingValFilePath;
+    private final String trainingValFilePath;
 
     public List<String> dataTypes;
+
+    public Map<String,Color> colorTypes = new HashMap<>();
     public ArrayList<Point> listOfPoints = new ArrayList<>();
 
     public PreparedData(String trainingVal){
@@ -50,6 +51,7 @@ public class PreparedData {
             }
             dataTypes = typeList;
 
+            assignColor();
             bufferedReader.close();
 
         } catch (IOException e) {
@@ -64,5 +66,52 @@ public class PreparedData {
                 }
             }
         }
+    }
+    private void assignColor(){
+        for (String dataType : dataTypes) {
+            colorTypes.put(dataType, new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
+        }
+    }
+    public void addPointToGroup(PreparedData otherData, int kArg){
+
+
+        for (int i = 0; i < otherData.listOfPoints.size(); i++) {
+
+            HashMap<Double,Point> minMap = new HashMap<>();
+            ArrayList<Double> minVals = new ArrayList<>();
+            for (int j = 0; j < this.listOfPoints.size(); j++) {
+                minVals.add(otherData.listOfPoints.get(i).distanceCounter(this.listOfPoints.get(j)));
+                minMap.put(minVals.get(j),this.listOfPoints.get(j));
+            }
+            minVals.sort(Collections.reverseOrder());
+
+            HashMap<String,Integer> counterOfTypes = new HashMap<>();
+            for (String dataType : this.dataTypes) {
+                counterOfTypes.put(dataType, 0);
+            }
+
+            for (int j = 0; j < kArg; j++) {
+                var temp = minMap.get(minVals.get(j)).getPointType();
+                if (counterOfTypes.containsKey(temp)){
+                    counterOfTypes.replace(temp,counterOfTypes.get(temp) + 1);
+                }
+            }
+            int maxVal = maxValInMap(counterOfTypes,this.dataTypes);
+            double accuracy = ((double) maxVal/kArg);
+
+            System.out.println("Added record: " + otherData.listOfPoints.get(i).getPointValues() + " - " +
+                    otherData.listOfPoints.get(i).getPointType() + " to simulation with " + accuracy + " !");
+        }
+    }
+    private static int maxValInMap(HashMap<String,Integer> map, List<String> dataTypes){
+
+        int result = 0;
+
+        for (int i = 0; i < map.size(); i++) {
+            if (map.get(dataTypes.get(i)) > result){
+                result = map.get(dataTypes.get(i));
+            }
+        }
+        return result;
     }
 }
