@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -12,10 +11,9 @@ public class Main {
         String filePath = "tranigVal.csv";
 
         var data = new PreparedData(filePath);
-
         data.dataPrep();
 
-        new PreparedSimulation(data);
+        var simData = new PreparedSimulation(data);
 
         System.out.println(filePath + " loaded successfully! Please insert testFilePath:");
         //String testFilePath = in.nextLine();
@@ -27,18 +25,39 @@ public class Main {
         var newData = new PreparedData(testFilePath);
 
         newData.dataPrep();
+        data.addPointsToGroup(newData, kParam);
 
-        data.addPointToGroup(newData, kParam);
-        //new PreparedSimulation(newData);
-        System.out.println("Simulation ended successfully! Program shutdown!");
+        simData.updateSimulation();
 
-        /*ArrayList<Double> test1 = new ArrayList<>();
-        test1.add(6.7);
-        test1.add(3.1);
-        test1.add(5.6);
-        test1.add(2.4);*/
+        while (true){
+            String con = in.nextLine();
+            switch (con) {
+                case "EXIT" -> System.exit(0);
+                case "FIND" -> {
+                    System.out.println("Insert record:");
+                    data.getPointFromList(in.nextLine());
+                }
+                case "ADD" -> {
 
-        //data.getPointFromList(test1);
+                    System.out.println("Insert record:");
+
+                    String record = in.nextLine();
+
+                    var tempData = new PreparedData(record);
+                    tempData.prepSinglePoint(record);
+
+                    System.out.println("Please insert 'k' parameter:");
+
+                    data.addPointsToGroup(tempData, in.nextInt());
+                    simData.updateSimulation();
+                }
+            }
+            System.out.println("""
+                    Action ended successfully!
+                    Insert 'EXIT' to shutdown the program or click 'X' on window!
+                    Insert 'FIND' to find a specific record!
+                    Insert 'ADD' to add a new record""");
+        }
     }
 
 }

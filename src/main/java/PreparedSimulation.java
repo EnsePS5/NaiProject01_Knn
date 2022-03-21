@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
 
 public class PreparedSimulation extends JPanel{
 
@@ -43,6 +42,8 @@ public class PreparedSimulation extends JPanel{
 
             graphics.setColor(colorType);
             graphics.fillRect(firstVal,secondVal,10,10);
+            graphics.setColor(Color.BLACK);
+            graphics.drawRect(firstVal,secondVal,10,10);
         }
     }
     public void setVales(double firstDoubleVal, double secondDoubleVal, String type){
@@ -50,5 +51,7 @@ public class PreparedSimulation extends JPanel{
         secondVal = (int)(secondDoubleVal*50);
         colorType = data.colorTypes.get(type);
     }
-
+    public void updateSimulation(){
+        repaint();
+    }
 }

@@ -62,18 +62,28 @@ public class PreparedData {
         for (Point listOfPoint : listOfPoints) {
             if (listOfPoint.getPointValues().containsAll(values)) {
                 for (int j = 0; j < listOfPoint.getPointValues().size(); j++) {
-                    System.out.print(listOfPoint.getPointValues().get(j) + " "); //TODO change implementation
+                    System.out.print(listOfPoint.getPointValues().get(j) + " ");
                 }
+                System.out.println(listOfPoint.getPointType() + " is in simulation!");
+                return;
             }
         }
+        System.out.println("Record is not in simulation");
+    }
+    public void getPointFromList(String record){
+        List<String> tempS = List.of(record.split(","));
+        ArrayList<Double> tempD = new ArrayList<>();
+        for (int i = 0; i < tempS.size()-1; i++) {
+            tempD.add(Double.parseDouble(tempS.get(i)));
+        }
+        getPointFromList(tempD);
     }
     private void assignColor(){
         for (String dataType : dataTypes) {
             colorTypes.put(dataType, new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
         }
     }
-    public void addPointToGroup(PreparedData otherData, int kArg){
-
+    public void addPointsToGroup(PreparedData otherData, int kArg){//TODO change adding (must find it own type)
 
         for (int i = 0; i < otherData.listOfPoints.size(); i++) {
 
@@ -100,7 +110,9 @@ public class PreparedData {
             double accuracy = ((double) maxVal/kArg);
 
             System.out.println("Added record: " + otherData.listOfPoints.get(i).getPointValues() + " - " +
-                    otherData.listOfPoints.get(i).getPointType() + " to simulation with " + accuracy + " !");
+                    otherData.listOfPoints.get(i).getPointType() + " to simulation with " + accuracy + " accuracy!");
+
+            this.listOfPoints.add(otherData.listOfPoints.get(i));
         }
     }
     private static int maxValInMap(HashMap<String,Integer> map, List<String> dataTypes){
@@ -113,5 +125,14 @@ public class PreparedData {
             }
         }
         return result;
+    }
+    public void prepSinglePoint(String con){
+        List<String> tempS = List.of(con.split(","));
+        ArrayList<Double> tempD = new ArrayList<>();
+        for (int i = 0; i < tempS.size()-1; i++) {
+            tempD.add(Double.parseDouble(tempS.get(i)));
+        }
+        Point point = new Point(tempD, tempS.get(tempS.size()-1));
+        listOfPoints.add(point);
     }
 }
