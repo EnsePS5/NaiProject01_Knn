@@ -1,8 +1,10 @@
+import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         System.out.println("Please insert trainingFile path:");
 
@@ -23,9 +25,9 @@ public class Main {
         int kParam = in.nextInt();
 
         var newData = new PreparedData(testFilePath);
-
-        newData.dataPrep();
-        data.addPointsToGroup(newData, kParam);
+        newData.assigningPointsToTypes(kParam,data);
+        //newData.dataPrep();
+        //data.addPointsToGroup(newData, kParam);
 
         simData.updateSimulation();
 
@@ -44,19 +46,22 @@ public class Main {
                     String record = in.nextLine();
 
                     var tempData = new PreparedData(record);
-                    tempData.prepSinglePoint(record);
 
                     System.out.println("Please insert 'k' parameter:");
+                    int kArg = in.nextInt();
 
-                    data.addPointsToGroup(tempData, in.nextInt());
+                    tempData.assigningPointsToTypes(List.of(record.split(",")),kArg,data);
+
                     simData.updateSimulation();
                 }
-            }
-            System.out.println("""
+                default -> {
+                    System.out.println("""
                     Action ended successfully!
                     Insert 'EXIT' to shutdown the program or click 'X' on window!
                     Insert 'FIND' to find a specific record!
                     Insert 'ADD' to add a new record""");
+                }
+            }
         }
     }
 

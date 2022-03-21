@@ -1,8 +1,5 @@
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -22,13 +19,11 @@ public class PreparedData {
 
     // Reads and prepare data to use. Extracts unique types of groups
     // returns List<String> type
-    public void dataPrep(){
+    public void dataPrep() throws IOException {
 
-        File file = new File(trainingValFilePath);
         ArrayList<String> typeList = new ArrayList<>(3);
 
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        BufferedReader bufferedReader = fileOpener(trainingValFilePath);
 
             String line;
             while ((line = bufferedReader.readLine()) != null){
@@ -54,9 +49,6 @@ public class PreparedData {
             assignColor();
             bufferedReader.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     public void getPointFromList(ArrayList<Double> values){
         for (Point listOfPoint : listOfPoints) {
@@ -83,56 +75,76 @@ public class PreparedData {
             colorTypes.put(dataType, new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
         }
     }
-    public void addPointsToGroup(PreparedData otherData, int kArg){//TODO change adding (must find it own type)
+    public void assigningPointsToTypes(int kParam,PreparedData superData) throws IOException {
+        BufferedReader bufferedReader = fileOpener(trainingValFilePath);
 
-        for (int i = 0; i < otherData.listOfPoints.size(); i++) {
-
-            HashMap<Double,Point> minMap = new HashMap<>();
-            ArrayList<Double> minVals = new ArrayList<>();
-            for (int j = 0; j < this.listOfPoints.size(); j++) {
-                minVals.add(otherData.listOfPoints.get(i).distanceCounter(this.listOfPoints.get(j)));
-                minMap.put(minVals.get(j),this.listOfPoints.get(j));
-            }
-            minVals.sort(Collections.reverseOrder());
-
-            HashMap<String,Integer> counterOfTypes = new HashMap<>();
-            for (String dataType : this.dataTypes) {
-                counterOfTypes.put(dataType, 0);
-            }
-
-            for (int j = 0; j < kArg; j++) {
-                var temp = minMap.get(minVals.get(j)).getPointType();
-                if (counterOfTypes.containsKey(temp)){
-                    counterOfTypes.replace(temp,counterOfTypes.get(temp) + 1);
-                }
-            }
-            int maxVal = maxValInMap(counterOfTypes,this.dataTypes);
-            double accuracy = ((double) maxVal/kArg);
-
-            System.out.println("Added record: " + otherData.listOfPoints.get(i).getPointValues() + " - " +
-                    otherData.listOfPoints.get(i).getPointType() + " to simulation with " + accuracy + " accuracy!");
-
-            this.listOfPoints.add(otherData.listOfPoints.get(i));
+        String line;
+        while ((line = bufferedReader.readLine()) != null){
+            List<String>temp = List.of(line.split(","));
+            assigningPointsToTypes(temp,kParam,superData);
         }
     }
-    private static int maxValInMap(HashMap<String,Integer> map, List<String> dataTypes){
+    public void assigningPointsToTypes(List<String> pointVal,int kParam,PreparedData superData){
+
+        ArrayList<Double> values = new ArrayList<>();
+
+        for (String s : pointVal) {
+            values.add(Double.parseDouble(s));
+        }
+
+        ArrayList<Double> minValues = new ArrayList<>();
+        HashMap <Double,Integer> mapOfPoints = new HashMap<>();
+
+        for (int i = 0; i < superData.listOfPoints.size(); i++) {
+
+            double temp = superData.listOfPoints.get(i).distanceCounter(values);
+
+            minValues.add(temp);
+            mapOfPoints.put(temp,i);
+        }
+
+        Collections.sort(minValues);
+        int[] mostTypesCounter = new int[superData.dataTypes.size()];
+
+        for (int i = 0; i < kParam; i++) {
+
+            String tempType = superData.listOfPoints.get(mapOfPoints.get(minValues.get(i))).getPointType();
+
+            for (int j = 0; j < superData.dataTypes.size(); j++) {
+                if (tempType.equals(superData.dataTypes.get(j))){
+                    mostTypesCounter[j]++;
+                }
+            }
+        }
+
+        int maxValIndex = maxValIndex(mostTypesCounter);
+
+        Point point = new Point(values,superData.dataTypes.get(maxValIndex));
+        superData.listOfPoints.add(point);
+
+        double accuracy = (double)mostTypesCounter[maxValIndex]/kParam;
+
+        System.out.print("Record ");
+        for (Double value : values) {
+            System.out.print(value + " ");
+        }
+        System.out.println(superData.dataTypes.get(maxValIndex) + " has been added successfully with " + accuracy + " accuracy!");
+    }
+    public static BufferedReader fileOpener(String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+
+        return new BufferedReader(new FileReader(file));
+    }
+    private int maxValIndex(int [] vals){
 
         int result = 0;
 
-        for (int i = 0; i < map.size(); i++) {
-            if (map.get(dataTypes.get(i)) > result){
-                result = map.get(dataTypes.get(i));
+        for (int i = 1; i < vals.length; i++) {
+            if (vals[i] > vals[result]){
+                result = i;
             }
         }
+
         return result;
-    }
-    public void prepSinglePoint(String con){
-        List<String> tempS = List.of(con.split(","));
-        ArrayList<Double> tempD = new ArrayList<>();
-        for (int i = 0; i < tempS.size()-1; i++) {
-            tempD.add(Double.parseDouble(tempS.get(i)));
-        }
-        Point point = new Point(tempD, tempS.get(tempS.size()-1));
-        listOfPoints.add(point);
     }
 }
